@@ -5,6 +5,7 @@ import { UsersModule } from './users/users.module';
 import { UtilService } from './util/util.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AddressModule } from './address/address.module';
+import { ProfessionsModule } from './professions/professions.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { AddressModule } from './address/address.module';
       autoLoadEntities: true,
     }),
     AddressModule,
+    ProfessionsModule,
   ],
   controllers: [AppController],
   providers: [AppService, UtilService],
