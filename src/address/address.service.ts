@@ -4,6 +4,7 @@ import { UpdateAddressDto } from './dto/update-address.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Address } from './entities/address.entity';
 import { Repository } from 'typeorm';
+import { NotFoundError } from 'rxjs';
 
 @Injectable()
 export class AddressService {
@@ -13,22 +14,40 @@ export class AddressService {
   ) {}
 
   create(createAddressDto: CreateAddressDto) {
-    return 'This action adds a new address';
+    const address = this.addressRepository.create(createAddressDto);
+    return this.addressRepository.save(address);
   }
 
   findAll() {
-    return `This action returns all address`;
+    return this.addressRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} address`;
+  async findOne(id: number) {
+    const address = await this.addressRepository.findOne({
+      where: {
+        id,
+      },
+    });
+
+    if (!address) {
+      throw new NotFoundError(`Registro não encontrado com o id: ${id}`);
+    }
+    return address;
   }
 
-  update(id: number, updateAddressDto: UpdateAddressDto) {
-    return `This action updates a #${id} address`;
+  async update(id: number, updateAddressDto: UpdateAddressDto) {
+    const address = await this.addressRepository.preload({
+      id,
+      ...updateAddressDto,
+    });
+    if (!address) {
+      throw new NotFoundError(`Id informado ${id} não existe`);
+    }
+    return this.addressRepository.save(address);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} address`;
+  async remove(id: number) {
+    const address = await this.findOne(id);
+    return this.addressRepository.remove(address);
   }
 }
