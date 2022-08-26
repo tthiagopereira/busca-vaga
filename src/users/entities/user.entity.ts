@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToMany,
+  JoinTable,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Profession } from '../../professions/entities/profession.entity';
 
 @Entity('users')
 export class User {
@@ -25,4 +32,10 @@ export class User {
 
   @Column()
   password: string;
+
+  @JoinTable()
+  @ManyToMany(() => Profession, (profession: Profession) => profession.users, {
+    cascade: true,
+  })
+  professions: Profession[];
 }

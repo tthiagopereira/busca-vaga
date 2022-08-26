@@ -21,4 +21,7 @@ export class CreateUserDto {
 
   @IsString()
   type: string;
+
+  @IsString({ each: true })
+  professions: string[];
 }
