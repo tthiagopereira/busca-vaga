@@ -27,7 +27,9 @@ export class UsersService {
   }
 
   findAll() {
-    return this.userRepository.find();
+    return this.userRepository.find({
+      relations: ['professions'],
+    });
   }
 
   findOne(id: number) {
@@ -35,6 +37,7 @@ export class UsersService {
       where: {
         id,
       },
+      relations: ['professions'],
     });
 
     if (!user) {
