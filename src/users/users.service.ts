@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -10,8 +10,10 @@ import { Profession } from '../professions/entities/profession.entity';
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User) private readonly userRepository: Repository<User>,
-    @InjectRepository(Profession)
+    @Inject('USERS_REPOSITORY')
+    private readonly userRepository: Repository<User>,
+
+    @Inject('PROFESSIONS_REPOSITORY')
     private readonly professionRepository: Repository<Profession>,
   ) {}
 
@@ -26,13 +28,13 @@ export class UsersService {
     return this.userRepository.save(user);
   }
 
-  findAll() {
+  async findAll() {
     return this.userRepository.find({
       relations: ['professions'],
     });
   }
 
-  findOne(id: number) {
+  async findOne(id: number) {
     const user = this.userRepository.findOne({
       where: {
         id,
